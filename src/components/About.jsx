@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
-import { useRef } from 'react';
-import { Code2, Brain, Zap, Target, Coffee, Rocket, GraduationCap } from 'lucide-react';
+import { Code2, Brain, Zap, Target, Coffee, Rocket, GraduationCap, Camera } from 'lucide-react';
 
 const stats = [
   { label: 'Projects Built', value: '10+', icon: Rocket },
@@ -13,24 +12,56 @@ const stats = [
 
 const ProfilePhoto = () => {
   const [error, setError] = useState(false);
-  
-  if (error) {
-    return (
-      <div className="w-full h-full bg-gradient-to-br from-dark-200 to-dark-300 flex items-center justify-center">
-        <span className="text-6xl font-heading font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-          MZ
-        </span>
-      </div>
-    );
-  }
+  const [profileSrc, setProfileSrc] = useState('/profile.jpg');
+  const fileInputRef = useRef(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileSrc(reader.result);
+        setError(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   
   return (
-    <img
-      src="/profile.jpg"
-      alt="Mohammed Zaid M"
-      className="w-full h-full object-cover"
-      onError={() => setError(true)}
-    />
+    <div className="relative w-full h-full group">
+      {!error ? (
+        <img
+          src={profileSrc}
+          alt="Mohammed Zaid M"
+          className="w-full h-full object-cover"
+          onError={() => setError(true)}
+        />
+      ) : (
+        <div className="w-full h-full bg-gradient-to-br from-dark-200 to-dark-300 flex items-center justify-center">
+          <span className="text-6xl font-heading font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+            MZ
+          </span>
+        </div>
+      )}
+
+      {/* Edit Overlay */}
+      <div 
+        className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center cursor-pointer z-20"
+        onClick={() => fileInputRef.current?.click()}
+        title="Change Profile Picture"
+      >
+        <Camera className="w-8 h-8 text-white" />
+      </div>
+      
+      {/* Hidden File Input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleImageChange}
+        accept="image/*"
+        className="hidden"
+      />
+    </div>
   );
 };
 

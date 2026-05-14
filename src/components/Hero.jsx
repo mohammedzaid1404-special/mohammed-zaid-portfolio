@@ -1,10 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Typewriter } from 'react-simple-typewriter';
-import { ArrowDown, Github, Linkedin, Mail, ExternalLink, Sparkles, Instagram } from 'lucide-react';
+import { ArrowDown, Github, Linkedin, Mail, ExternalLink, Sparkles, Instagram, Camera } from 'lucide-react';
 
 const Hero = () => {
   const [photoError, setPhotoError] = useState(false);
+  const [profileSrc, setProfileSrc] = useState('/profile.jpg');
+  const fileInputRef = useRef(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileSrc(reader.result);
+        setPhotoError(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleScrollDown = () => {
     document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
@@ -193,14 +207,14 @@ const Hero = () => {
               {/* Center Avatar/Photo */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <motion.div
-                  className="w-48 h-48 rounded-full bg-gradient-to-br from-primary to-secondary p-[3px] shadow-2xl shadow-primary/30"
+                  className="relative group w-48 h-48 rounded-full bg-gradient-to-br from-primary to-secondary p-[3px] shadow-2xl shadow-primary/30"
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
                 >
-                  <div className="w-full h-full rounded-full bg-dark-100 flex items-center justify-center overflow-hidden">
+                  <div className="relative w-full h-full rounded-full bg-dark-100 flex items-center justify-center overflow-hidden">
                     {!photoError ? (
                       <img
-                        src="/profile.jpg"
+                        src={profileSrc}
                         alt="Mohammed Zaid M"
                         className="w-full h-full object-cover rounded-full"
                         onError={() => setPhotoError(true)}
@@ -210,7 +224,25 @@ const Hero = () => {
                         MZ
                       </span>
                     )}
+                    
+                    {/* Edit Overlay */}
+                    <div 
+                      className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center cursor-pointer"
+                      onClick={() => fileInputRef.current?.click()}
+                      title="Change Profile Picture"
+                    >
+                      <Camera className="w-8 h-8 text-white" />
+                    </div>
                   </div>
+                  
+                  {/* Hidden File Input */}
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
                 </motion.div>
               </div>
 
