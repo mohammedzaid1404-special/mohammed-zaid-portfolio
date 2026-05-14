@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { ExternalLink, Github, Eye, ChevronRight, Sparkles } from 'lucide-react';
+import { ExternalLink, Github, Eye, ChevronRight, Sparkles, Plus } from 'lucide-react';
 
 const projects = [
   {
@@ -240,29 +240,50 @@ const Projects = () => {
           <div className="w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full mt-6" />
         </motion.div>
 
-        {/* Category Filter */}
-        <motion.div
-          className="flex justify-center gap-3 mb-12 flex-wrap"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          {categories.map((cat) => (
+        {/* Controls Container */}
+        <div className="relative mb-12 flex flex-col items-center">
+          {/* Category Filter */}
+          <motion.div
+            className="flex justify-center gap-3 flex-wrap"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            {categories.map((cat) => (
+              <motion.button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+                  activeCategory === cat
+                    ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/25'
+                    : 'bg-white/5 border border-white/10 text-slate-400 hover:text-slate-200 hover:border-white/20'
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {cat}
+              </motion.button>
+            ))}
+          </motion.div>
+
+          {/* Add Project Button */}
+          <motion.div
+            className="mt-6 sm:mt-0 sm:absolute sm:right-0 sm:top-1/2 sm:-translate-y-1/2"
+            initial={{ opacity: 0, x: 20 }}
+            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
             <motion.button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
-                activeCategory === cat
-                  ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/25'
-                  : 'bg-white/5 border border-white/10 text-slate-400 hover:text-slate-200 hover:border-white/20'
-              }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              className="group flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium bg-gradient-to-r from-primary/20 to-secondary/20 border border-primary/30 text-white hover:bg-primary/30 hover:border-primary/50 transition-all duration-300 shadow-lg shadow-primary/10"
+              onClick={() => console.log('Add Project')}
             >
-              {cat}
+              <Plus size={18} className="text-primary group-hover:rotate-90 transition-transform duration-300" />
+              <span>Add Projects</span>
             </motion.button>
-          ))}
-        </motion.div>
+          </motion.div>
+        </div>
 
         {/* Projects Grid */}
         <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
